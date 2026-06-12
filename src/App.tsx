@@ -22,17 +22,16 @@ export default function App() {
           {/* Brand Logo & Title */}
           <div className="flex items-center space-x-3.5">
             <div className="w-10 h-10 rounded-full bg-[#8B7355] border border-gold-100 flex items-center justify-center shadow-xs">
-              <span className="font-serif font-semibold text-white text-base tracking-widest">蓮</span>
+              <span className="font-serif font-semibold text-white text-base tracking-widest">孝</span>
             </div>
             <div>
               <div className="flex items-center space-x-2">
                 <span className="px-2 py-0.5 bg-[#8B7355] text-white text-[9px] font-semibold tracking-widest rounded-xs uppercase">
                   十方共修
                 </span>
-                <span className="text-xs text-gold-700 tracking-wider font-semibold font-serif">雲端妙音閣</span>
               </div>
               <h1 className="font-serif text-lg md:text-xl font-medium tracking-tight text-[#5C544E]">
-                蓮池功德彙報系統
+                中元孝親祈福誦經迴向
               </h1>
             </div>
           </div>

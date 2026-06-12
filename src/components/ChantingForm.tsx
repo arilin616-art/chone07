@@ -204,7 +204,7 @@ export default function ChantingForm({
               <span className="text-[10px] uppercase tracking-widest text-[#8C857E] font-bold block">
                 功德圓滿 • 回報法壇
               </span>
-              <h2 className="font-serif text-lg font-medium text-[#5C544E]">法寶持誦雲端申報</h2>
+              <h2 className="font-serif text-lg font-medium text-[#5C544E]">誦經功德迴向</h2>
             </div>
           </div>
 
