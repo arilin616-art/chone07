@@ -1,0 +1,71 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Catch-All Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Standard Helpers
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Validation definitions
+    function isValidRecitation(data) {
+      return data.keys().hasAll(['reporterName', 'sutraId', 'sutraName', 'count', 'timestamp'])
+        && data.keys().size() <= 7 // optional dedication, userId
+        && data.reporterName is string && data.reporterName.size() > 0 && data.reporterName.size() <= 100
+        && data.sutraId is string && data.sutraId.size() > 0 && data.sutraId.size() <= 100
+        && data.sutraName is string && data.sutraName.size() > 0 && data.sutraName.size() <= 100
+        && data.count is int && data.count >= 1 && data.count <= 1000000
+        && data.timestamp == request.time
+        && (!('dedication' in data) || (data.dedication is string && data.dedication.size() <= 2000))
+        && (!('userId' in data) || (data.userId is string && data.userId.size() <= 128));
+    }
+
+    function isValidSutraTotal(data) {
+      return data.keys().hasAll(['sutraId', 'sutraName', 'totalCount', 'lastUpdatedAt'])
+        && data.keys().size() == 4
+        && data.sutraId is string && data.sutraId.size() > 0 && data.sutraId.size() <= 100
+        && data.sutraName is string && data.sutraName.size() > 0 && data.sutraName.size() <= 100
+        && data.totalCount is int && data.totalCount >= 0
+        && data.lastUpdatedAt == request.time;
+    }
+
+    // 2. Recitations Collection
+    match /recitations/{recitationId} {
+      allow get: if true;
+      allow list: if true; // Public feed so everyone can see ongoing roll of honor
+      allow create: if isValidId(recitationId) 
+        && isValidRecitation(incoming())
+        // Secure identification check
+        && (!('userId' in incoming()) || (isSignedIn() && incoming().userId == request.auth.uid));
+      allow update, delete: if false; // Recitations are completely immutable!
+    }
+
+    // 3. Sutra Totals Collection
+    match /sutra_totals/{sutraId} {
+      allow get, list: if true;
+      allow create: if isValidId(sutraId) && isValidSutraTotal(incoming());
+      allow update: if isValidId(sutraId) 
+        && isValidSutraTotal(incoming())
+        && incoming().sutraId == existing().sutraId
+        && incoming().sutraName == existing().sutraName
+        && incoming().totalCount >= existing().totalCount;
+      allow delete: if false;
+    }
+  }
+}

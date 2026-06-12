@@ -1,0 +1,41 @@
+{
+  "entities": {
+    "recitation": {
+      "title": "Recitation Record",
+      "description": "A record of chanting recitation submitted by a user.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "The Firebase Auth UID of the user or 'guest'." },
+        "reporterName": { "type": "string", "description": "The name or Dharma name of the chanting person." },
+        "sutraId": { "type": "string", "description": "Target sutra reference ID." },
+        "sutraName": { "type": "string", "description": "Target sutra name." },
+        "count": { "type": "number", "description": "Number of times chanted." },
+        "dedication": { "type": "string", "description": "Merit dedication text or prayer." },
+        "timestamp": { "type": "string", "format": "date-time", "description": "Creation timestamp." }
+      },
+      "required": ["reporterName", "sutraId", "sutraName", "count", "timestamp"]
+    },
+    "sutraTotal": {
+      "title": "Sutra Aggregation Total",
+      "description": "Aggregated recitation count for a specific sutra.",
+      "type": "object",
+      "properties": {
+        "sutraId": { "type": "string", "description": "The sutra ID." },
+        "sutraName": { "type": "string", "description": "The name of the sutra." },
+        "totalCount": { "type": "number", "description": "Total sum of recitations." },
+        "lastUpdatedAt": { "type": "string", "format": "date-time", "description": "Timestamp of last update." }
+      },
+      "required": ["sutraId", "sutraName", "totalCount", "lastUpdatedAt"]
+    }
+  },
+  "firestore": {
+    "/recitations/{recitationId}": {
+      "schema": "recitation",
+      "description": "Collection of all submitted recitation records."
+    },
+    "/sutra_totals/{sutraId}": {
+      "schema": "sutraTotal",
+      "description": "Collection of accumulated totals per sutra."
+    }
+  }
+}

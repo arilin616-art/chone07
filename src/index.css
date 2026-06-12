@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+TC:wght@450;500;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Noto Serif TC", "Playfair Display", Georgia, serif;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  /* Buddhist / Zen color presets - reoriented to Clean Minimalism */
+  --color-gold-50: #FAF9F6;
+  --color-gold-100: #E8E4DD;
+  --color-gold-500: #8B7355;
+  --color-gold-600: #725E45;
+  --color-gold-700: #5C544E;
+  --color-monk-brown: #3E3A39;
+  --color-temple-red: #8B7355;
+  --color-incense-gray: #8C857E;
+}
+
+body {
+  background-color: #FAF9F6;
+  color: #3E3A39;
+  font-family: var(--font-sans);
+}
+
+/* Custom visual pulse animation for the interactive Wooden Fish */
+@keyframes wooden-fish-pulse {
+  0% { transform: scale(1); }
+  35% { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+
+.fish-pulse {
+  animation: wooden-fish-pulse 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Incense stick smoke animation */
+@keyframes smoke-float {
+  0% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0.1;
+  }
+  50% {
+    transform: translateY(-80px) translateX(6px) scale(1.4);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(-160px) translateX(-4px) scale(2);
+    opacity: 0;
+  }
+}
+
+.incense-smoke {
+  animation: smoke-float 5s infinite ease-in-out;
+}

@@ -1,0 +1,6 @@
+{
+  "name": "雲端誦經共修回報系統",
+  "description": "一個莊嚴精美的雲端誦經與念佛次數回報系統，支援線上敲木魚計數、功德共修統計、願力芳名錄、以及 AI 禪心智慧導師生成個人專屬迴向文。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
