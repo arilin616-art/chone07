@@ -87,7 +87,7 @@ export default function TempleStats({ refreshTrigger }: TempleStatsProps) {
                   <span className="text-sm font-bold font-serif text-[#8B7355] tracking-tight">
                     {countVal.toLocaleString()}{" "}
                     <span className="text-[10px] font-sans font-normal text-[#8C857E]">
-                      遍
+                      部
                     </span>
                   </span>
                 </div>

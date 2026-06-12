@@ -22,7 +22,7 @@ export default function ChantingForm({
 }: ChantingFormProps) {
   // Local states
   const userName = "十方同修";
-  const [count, setCount] = useState<number>(1);
+  const [count, setCount] = useState<number | "">(1);
   const [dedicationText, setDedicationText] = useState<string>("");
   
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -54,14 +54,14 @@ export default function ChantingForm({
   // Tap Woodfish action
   const handleTapWoodFish = (e?: React.MouseEvent<HTMLDivElement>) => {
     playWoodenFishSound();
-    setCount(prev => prev + 1);
+    setCount(prev => (prev === "" ? 1 : prev + 1));
 
     // Floating zen phrase trigger
     const id = Date.now() + Math.random();
     const x = e ? e.nativeEvent.offsetX : 50;
     const y = e ? e.nativeEvent.offsetY : 30;
 
-    const phrases = ["功德 +1 遍", "福慧雙修", "身心安寧", "消災解厄", "意氣和合", "般若光芒"];
+    const phrases = ["功德 +1 部", "福慧雙修", "身心安寧", "消災解厄", "意氣和合", "般若光芒"];
     const phrase = phrases[Math.floor(Math.random() * phrases.length)];
 
     setFloatingTexts(prev => [
@@ -87,15 +87,15 @@ export default function ChantingForm({
   // Sync imported counts from local wooden fish clicks
   useEffect(() => {
     if (importedCount > 0) {
-      setCount(prev => prev + importedCount);
+      setCount(prev => (prev === "" ? 0 : prev) + importedCount);
     }
   }, [importedCount]);
 
   // Handle Cloud DB batch write
   const handleSubmitPort = async (e: FormEvent) => {
     e.preventDefault();
-    if (count <= 0) {
-      setErrorMessage("回報遍數必須大於等於 1 遍");
+    if (count === "" || count <= 0) {
+      setErrorMessage("回報部數必須大於等於 1 部");
       return;
     }
 
@@ -115,7 +115,7 @@ export default function ChantingForm({
         reporterName: userName,
         sutraId: targetSutra.id,
         sutraName: targetSutra.name,
-        count: Math.floor(count),
+        count: Math.floor(Number(count)),
         timestamp: serverTimestamp()
       };
 
@@ -136,7 +136,7 @@ export default function ChantingForm({
         {
           sutraId: targetSutra.id,
           sutraName: targetSutra.name,
-          totalCount: increment(Math.floor(count)),
+          totalCount: increment(Math.floor(Number(count))),
           lastUpdatedAt: serverTimestamp()
         },
         { merge: true }
@@ -202,7 +202,7 @@ export default function ChantingForm({
             </div>
             <div>
               <span className="text-[10px] uppercase tracking-widest text-[#8C857E] font-bold block">
-                功德圓滿 • 回報法壇
+                功德圓滿
               </span>
               <h2 className="font-serif text-lg font-medium text-[#5C544E]">誦經功德迴向</h2>
             </div>
@@ -238,7 +238,7 @@ export default function ChantingForm({
               {/* Counts input */}
               <div>
                 <label className="block text-xs font-semibold text-[#8C857E] uppercase tracking-widest mb-1">
-                  持誦遍數 <span className="text-red-500">*</span>
+                  持誦部數 <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <input
@@ -247,40 +247,50 @@ export default function ChantingForm({
                     max="1000000"
                     required
                     value={count}
-                    onChange={e => setCount(Math.max(1, parseInt(e.target.value) || 0))}
+                    onChange={e => {
+                      const val = e.target.value;
+                      if (val === "") {
+                        setCount("");
+                      } else {
+                        const parsed = parseInt(val, 10);
+                        if (!isNaN(parsed)) {
+                          setCount(Math.max(1, parsed));
+                        }
+                      }
+                    }}
                     className="w-full bg-white border border-[#E8E4DD] focus:border-[#8B7355] rounded-xl pl-3.5 pr-10 py-3 text-sm outline-none font-semibold text-[#3E3A39] transition-colors shadow-2xs"
                     id="form-recitation-count"
                   />
-                  <span className="absolute right-3.5 top-3.5 text-xs text-[#8C857E] font-bold">遍</span>
+                  <span className="absolute right-3.5 top-3.5 text-xs text-[#8C857E] font-bold">部</span>
                 </div>
                 {/* Micro Helper Adjustments */}
                 <div className="flex gap-1.5 mt-2">
                   <button
                     type="button"
-                    onClick={() => setCount(prev => Math.max(1, prev - 1))}
+                    onClick={() => setCount(prev => Math.max(1, (prev === "" ? 0 : prev) - 1))}
                     className="flex-1 py-1 bg-gray-50 hover:bg-gray-100 rounded-lg text-[10px] text-gray-500 font-medium transition-colors border border-gray-100"
                   >
-                    -1 遍
+                    -1 部
                   </button>
                   <button
                     type="button"
-                    onClick={() => setCount(prev => prev + 5)}
+                    onClick={() => setCount(prev => (prev === "" ? 0 : prev) + 5)}
                     className="flex-1 py-1 bg-[#F4F1EC] hover:bg-[#EAE4DC] rounded-lg text-[10px] text-[#8B7355] font-medium transition-colors border border-[#E8E4DD]"
                   >
-                    +5 遍
+                    +5 部
                   </button>
                   <button
                     type="button"
-                    onClick={() => setCount(prev => prev + 10)}
+                    onClick={() => setCount(prev => (prev === "" ? 0 : prev) + 10)}
                     className="flex-1 py-1 bg-[#F4F1EC] hover:bg-[#EAE4DC] rounded-lg text-[10px] text-[#8B7355] font-medium transition-colors border border-[#E8E4DD]"
                   >
-                    +10 遍
+                    +10 部
                   </button>
                   <button
                     type="button"
                     onClick={() => setCount(1)}
                     className="py-1 px-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[10px] font-medium transition-all border border-red-100 flex items-center justify-center"
-                    title="重設為 1 遍"
+                    title="重設為 1 部"
                   >
                     <RotateCcw className="w-3 h-3" />
                   </button>
@@ -292,7 +302,7 @@ export default function ChantingForm({
             <div>
               <div className="flex justify-between items-center mb-1">
                 <label className="block text-xs font-semibold text-[#8C857E] uppercase tracking-widest">
-                  功德迴向文（疏文內容）
+                  功德迴向文
                 </label>
                 <span className="text-[10px] text-[#A8947A] font-serif">功德周遍，無作自顯</span>
               </div>
@@ -408,7 +418,7 @@ export default function ChantingForm({
               <Sparkles className="w-3 h-3 text-[#D4AF37] animate-pulse" />
               隨文敲擊計數區
             </span>
-            <p className="text-[11px] text-[#A8947A] font-serif">點擊下方木魚，將清脆作響並為「持誦遍數」累加一</p>
+            <p className="text-[11px] text-[#A8947A] font-serif">點擊下方木魚，將清脆作響並為「持誦部數」累加一</p>
           </div>
 
           {/* Interactive Woodfish Area */}
