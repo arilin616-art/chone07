@@ -30,26 +30,7 @@ export default function ChantingForm({
 
   // Interactive Scripture and Woodfish States
   const [fontSize, setFontSize] = useState<string>("text-lg");
-  const [isAutoScrolling, setIsAutoScrolling] = useState<boolean>(false);
   const [floatingTexts, setFloatingTexts] = useState<{ id: number; text: string; top: number; left: number }[]>([]);
-
-  // Slow auto-scroll script
-  useEffect(() => {
-    let interval: any;
-    if (isAutoScrolling) {
-      const container = document.getElementById("scripture-scroll-container");
-      if (container) {
-        interval = setInterval(() => {
-          container.scrollTop += 0.5;
-          // Wrap scroll if reaches the end
-          if (container.scrollTop + container.clientHeight >= container.scrollHeight - 2) {
-            container.scrollTop = 0;
-          }
-        }, 40);
-      }
-    }
-    return () => clearInterval(interval);
-  }, [isAutoScrolling, selectedSutraId]);
 
   // Tap Woodfish action
   const handleTapWoodFish = (e?: React.MouseEvent<HTMLDivElement>) => {
@@ -58,8 +39,8 @@ export default function ChantingForm({
 
     // Floating zen phrase trigger
     const id = Date.now() + Math.random();
-    const x = e ? e.nativeEvent.offsetX : 50;
-    const y = e ? e.nativeEvent.offsetY : 30;
+    const x = e ? e.nativeEvent.offsetX : 40;
+    const y = e ? e.nativeEvent.offsetY : 20;
 
     const phrases = ["功德 +1 部", "福慧雙修", "身心安寧", "消災解厄", "意氣和合", "般若光芒"];
     const phrase = phrases[Math.floor(Math.random() * phrases.length)];
@@ -194,7 +175,7 @@ export default function ChantingForm({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch w-full">
       {/* LEFT COLUMN: Submissions and Form (lg:col-span-5) */}
-      <div id="chanting-form" className="lg:col-span-5 bg-white rounded-3xl border border-gold-100 p-6 md:p-8 shadow-sm flex flex-col justify-between relative">
+      <div id="chanting-form" className="lg:col-span-12 xl:col-span-5 bg-white rounded-3xl border border-gold-100 p-6 md:p-8 shadow-sm flex flex-col justify-between relative">
         <div>
           <div className="flex items-center space-x-2.5 mb-5">
             <div className="p-2 rounded-xl bg-[#F4F1EC] border border-gold-100 text-[#8B7355]">
@@ -341,7 +322,7 @@ export default function ChantingForm({
       </div>
 
       {/* RIGHT COLUMN: Scripture text reader & Interactive Wooden Fish (lg:col-span-7) */}
-      <div className="lg:col-span-7 bg-white rounded-3xl border border-gold-100 p-6 md:p-8 shadow-sm flex flex-col justify-between space-y-5">
+      <div className="lg:col-span-12 xl:col-span-7 bg-white rounded-3xl border border-gold-100 p-6 md:p-8 shadow-sm flex flex-col justify-between space-y-5">
         
         {/* Title, font control and auto scroll toggle */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-3 border-b border-gray-100 gap-3">
@@ -353,19 +334,6 @@ export default function ChantingForm({
           </div>
 
           <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
-            {/* Auto Scrolling button */}
-            <button
-              type="button"
-              onClick={() => setIsAutoScrolling(!isAutoScrolling)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-serif font-medium transition-all cursor-pointer flex items-center gap-1 border ${
-                isAutoScrolling 
-                  ? "bg-amber-100 border-amber-300 text-[#8B7355]" 
-                  : "bg-gray-50 border-gray-200 text-gray-500 hover:text-[#3E3A39]"
-              }`}
-            >
-              <span>{isAutoScrolling ? "⏸ 暫停滾動" : "▶ 自動滾動"}</span>
-            </button>
-
             {/* Font Scaler controls */}
             <div className="flex bg-[#F4F1EC] p-1 rounded-lg items-center text-xs border border-[#E8E4DD]">
               <button
@@ -394,7 +362,7 @@ export default function ChantingForm({
         {/* Traditional Woodblock Style Scripture scroll reader */}
         <div 
           id="scripture-scroll-container" 
-          className="h-80 overflow-y-auto px-6 py-6 bg-[#FAF6F0] rounded-2xl border-4 border-double border-[#D4C3AD]/60 text-center select-none shadow-inner custom-scrollbar relative"
+          className="h-[60rem] overflow-y-auto px-6 py-6 bg-[#FAF6F0] rounded-2xl border-4 border-double border-[#D4C3AD]/60 text-center select-none shadow-inner custom-scrollbar relative"
         >
           {/* Subtle floral watermark effect */}
           <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(#8B7355_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
@@ -422,7 +390,7 @@ export default function ChantingForm({
           </div>
 
           {/* Interactive Woodfish Area */}
-          <div className="relative w-44 h-40 flex items-center justify-center select-none mt-1">
+          <div className="relative w-32 h-28 flex items-center justify-center select-none mt-1">
             
             {/* Absolute floating text particles */}
             <AnimatePresence>
@@ -430,7 +398,7 @@ export default function ChantingForm({
                 <motion.div
                   key={item.id}
                   initial={{ opacity: 0, y: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, y: -80, scale: 1.1 }}
+                  animate={{ opacity: 1, y: -50, scale: 1.1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 1.2, ease: "easeOut" }}
                   style={{
@@ -455,15 +423,15 @@ export default function ChantingForm({
               className="cursor-pointer select-none active:outline-none focus:outline-none"
               title="敲擊木魚，累計功德過關"
             >
-              <svg width="120" height="120" viewBox="0 0 120 120" fill="none" className="mx-auto drop-shadow-md">
+              <svg width="72" height="72" viewBox="0 0 120 120" fill="none" className="mx-auto drop-shadow-md">
                 {/* Wooden Fish Base */}
-                <path d="M100 70C100 89.33 82.09 105 60 105C37.91 105 20 89.33 20 70C20 50.67 37.91 35 60 35C82.09 35 100 50.67 100 70Z" fill="url(#wood-grad-main)" stroke="#725E45" strokeWidth="2.5" />
+                <path d="M100 70C100 89.33 82.09 105 60 105C37.91 105 20 89.33 20 70C20 50.67 37.91 35 60 35C82.09 35 100 50.67 100 70Z" fill="url(#wood-grad-main-small)" stroke="#725E45" strokeWidth="2.5" />
                 {/* Carved design / scales */}
                 <path d="M45 65C50 63 70 63 75 65" stroke="#3E342B" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
                 <path d="M40 73C48 70 72 70 80 73" stroke="#3E342B" strokeWidth="2" strokeLinecap="round" opacity="0.8" />
                 <path d="M48 81C53 78 67 78 72 81" stroke="#3E342B" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
                 {/* Fish tail / handle */}
-                <path d="M22 55C15 50 15 40 25 45L35 52C28 53 24 54 22 55Z" fill="url(#wood-grad-tail)" stroke="#725E45" strokeWidth="1.5" />
+                <path d="M22 55C15 50 15 40 25 45L35 52C28 53 24 54 22 55Z" fill="url(#wood-grad-tail-small)" stroke="#725E45" strokeWidth="1.5" />
                 {/* Fish eye */}
                 <circle cx="85" cy="55" r="4.5" fill="#2E241B" />
                 <circle cx="86" cy="54" r="1.5" fill="white" />
@@ -472,12 +440,12 @@ export default function ChantingForm({
                 
                 {/* Definitions node for radial color maps */}
                 <defs>
-                  <radialGradient id="wood-grad-main" cx="50%" cy="50%" r="50%">
+                  <radialGradient id="wood-grad-main-small" cx="50%" cy="50%" r="50%">
                     <stop offset="0%" stopColor="#C49B6E" />
                     <stop offset="75%" stopColor="#A57945" />
                     <stop offset="100%" stopColor="#7F5526" />
                   </radialGradient>
-                  <linearGradient id="wood-grad-tail" x1="0" y1="0" x2="1" y2="1">
+                  <linearGradient id="wood-grad-tail-small" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0%" stopColor="#A57945" />
                     <stop offset="100%" stopColor="#7F5526" />
                   </linearGradient>
