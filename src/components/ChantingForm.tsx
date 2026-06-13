@@ -200,7 +200,7 @@ export default function ChantingForm({
               {/* Choose scripture/mantra */}
               <div>
                 <label className="block text-xs font-semibold text-[#8C857E] uppercase tracking-widest mb-1">
-                  選擇持誦功修法門 <span className="text-red-500">*</span>
+                  選擇誦經經文 <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={selectedSutraId}
@@ -367,15 +367,50 @@ export default function ChantingForm({
           {/* Subtle floral watermark effect */}
           <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(#8B7355_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
 
-          <div className={`font-serif space-y-5 tracking-widest leading-loose text-[#2F241F] transition-all duration-300 ${fontSize}`}>
-            {activeSutraItem.content.split("\n\n").map((para, idx) => (
-              <p 
-                key={idx} 
-                className="font-serif hover:bg-[#F3EDE3] py-2 px-3 rounded-xl transition-colors selection:bg-rose-100"
-              >
-                {para}
-              </p>
-            ))}
+          <div className={`font-serif space-y-6 text-[#2F241F] transition-all duration-300 ${fontSize}`}>
+            {activeSutraItem.content.split("\n\n").map((para, idx) => {
+              // Split CJK characters into clauses ending of punctuation or whitespace
+              const puncs = "，。；！、？：,.?!:()（）[]【】{}<>〈〉";
+              const points = new Set(puncs.split(""));
+              
+              const clauses: string[] = [];
+              let currentClause = "";
+              
+              for (let i = 0; i < para.length; i++) {
+                const char = para[i];
+                currentClause += char;
+                
+                const isCurrentPuncOrSpace = points.has(char) || /\s/.test(char);
+                if (i === para.length - 1) {
+                  if (currentClause.trim()) {
+                    clauses.push(currentClause);
+                  }
+                } else {
+                  const nextChar = para[i + 1];
+                  const isNextPuncOrSpace = points.has(nextChar) || /\s/.test(nextChar);
+                  if (isCurrentPuncOrSpace && !isNextPuncOrSpace) {
+                    clauses.push(currentClause);
+                    currentClause = "";
+                  }
+                }
+              }
+              
+              return (
+                <p 
+                  key={idx} 
+                  className="font-serif hover:bg-[#F3EDE3]/40 py-2.5 px-4 rounded-xl transition-colors selection:bg-rose-100 flex flex-wrap justify-center items-center text-center gap-x-4 gap-y-2.5 leading-relaxed"
+                >
+                  {clauses.map((clause, cIdx) => (
+                    <span 
+                      key={cIdx} 
+                      className="inline-block whitespace-nowrap text-[#2F241F] hover:text-amber-800 transition-colors tracking-widest font-medium"
+                    >
+                      {clause}
+                    </span>
+                  ))}
+                </p>
+              );
+            })}
           </div>
         </div>
 
